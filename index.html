@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Invited!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --soft-pink: #fce4ec;
+            --butterfly-gold: #d4af37;
+            --deep-pink: #ad1457;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f58295, #f7b4bf);
+            font-family: 'Quicksand', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- ENVELOPE STYLES --- */
+        #envelope-container {
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.5s ease;
+        }
+
+        .envelope-icon {
+            font-size: 80px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .click-text {
+            margin-top: 20px;
+            color: var(--deep-pink);
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: fade 2s infinite;
+        }
+
+        /* --- INVITATION BOX (HIDDEN AT START) --- */
+        #invitation-card {
+            display: none; /* Hidden by default */
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 240, 240, 0.865);
+            max-width: 400px;
+            width: 85%;
+            text-align: center;
+            border: 2px solid #ffeef5;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        .show-card {
+            display: block !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--deep-pink); margin: 10px 0; }
+        
+        .rsvp-btn {
+            background-color: #ec407a;
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(236, 64, 122, 0.4);
+        }
+
+        /* Interactive Butterfly Particles */
+        .butterfly {
+            position: fixed;
+            width: 25px;
+            height: 25px;
+            background: url('https://cdn-icons-png.freepik.com/512/338/338337.png') no-repeat center/contain;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="envelope-container" onclick="openInvite()">
+        <div class="envelope-icon">💌</div>
+        <p class="click-text">You're Invited!<br>Tap to Open</p>
+    </div>
+
+    <div id="invitation-card">
+        <p style="letter-spacing: 2px;">A LITTLE BUTTERFLY IS TURNING</p>
+        <h1>One!</h1>
+        <p>Please join us to celebrate</p>
+        <h2 style="font-family: 'Dancing Script'; font-size: 2.2rem; color: #880e4f;">Safiya Eloise</h2>
+        
+        <div style="margin: 20px 0; line-height: 1.6;">
+            <strong>March 8, 2026, Sunday</strong><br>
+            1:30 PM | Mcdonald's Unciano Antipolo<br>
+            Circumferential Road, Antipolo City.
+        </div>
+
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSex7ncofGg7wpMjuuvmgxkIdLL-8ClZ1pVm3KZOrQXp3KFnQQ/viewform?usp=header" class="rsvp-btn">RSVP VIA GOOGLE FORMS</a>
+    </div>
+
+    <script>
+
+       let backgroundButterflyInterval;
+let isInviteOpened = false;
+
+function openInvite() {
+    isInviteOpened = true;
+    document.getElementById('envelope-container').style.display = 'none';
+    const card = document.getElementById('invitation-card');
+    card.classList.add('show-card');
+
+    // --- BURST EFFECT (From Center) ---
+    for(let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            createButterfly(window.innerWidth/2, window.innerHeight/2, 'burst');
+        }, i * 100);
+    }
+
+    // --- IMMEDIATE FLOATING (Fill the screen instantly) ---
+    for(let i = 0; i < 20; i++) {
+        // Randomly place them at different heights so they are already "floating"
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * window.innerHeight; 
+        createButterfly(startX, startY, 'float');
+    }
+
+    // --- CONTINUOUS FLOATING (Starts now) ---
+    backgroundButterflyInterval = setInterval(() => {
+        const randomX = Math.random() * window.innerWidth;
+        const randomY = window.innerHeight + 50; 
+        createButterfly(randomX, randomY, 'float');
+    }, 1000); // Created every 2 seconds for a fuller look
+}
+
+// Mouse/Touch Interaction
+document.addEventListener('mousemove', (e) => {
+    if (isInviteOpened && Math.random() > 0.8) {
+        createButterfly(e.pageX, e.pageY, 'trail');
+    }
+});
+
+document.addEventListener('touchstart', (e) => {
+    if (isInviteOpened) {
+        createButterfly(e.touches[0].pageX, e.touches[0].pageY, 'trail');
+    }
+});
+
+function createButterfly(x, y, type) {
+    const b = document.createElement('div');
+    b.className = 'butterfly';
+    b.style.left = x + 'px';
+    b.style.top = y + 'px';
+    
+    // VISIBILITY SETTINGS
+    // type 'float' is now more visible (0.8 instead of 0.4)
+    // Removed blur filter for maximum clarity
+    b.style.opacity = (type === 'float') ? "1" : "1";
+
+    document.body.appendChild(b);
+
+    let moveX, moveY, duration;
+
+    if (type === 'trail' || type === 'burst') {
+        moveX = (Math.random() - 0.5) * 300;
+        moveY = (Math.random() - 0.5) * 300;
+        duration = 2000;
+    } else {
+        // Floating path
+        moveX = (Math.random() - 0.5) * 200;
+        moveY = -window.innerHeight - 200; // Float off top
+        duration = 12000; // Slightly faster float
+    }
+
+    b.animate([
+        { transform: 'translate(0, 0) rotate(0deg)', opacity: b.style.opacity },
+        { transform: `translate(${moveX}px, ${moveY}px) rotate(360deg)`, opacity: 0 }
+    ], {
+        duration: duration,
+        easing: type === 'float' ? 'linear' : 'ease-out'
+    });
+
+    setTimeout(() => b.remove(), duration);
+}
+    </script>
+</body>
+</html>
